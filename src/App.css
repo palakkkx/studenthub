@@ -1,0 +1,139 @@
+nav {
+  background-color: #2563eb;
+  color: white;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 20px 50px;
+}
+
+nav h2 {
+  margin: 0;
+}
+
+.nav-links {
+  display: flex;
+  gap: 30px;
+}
+
+.nav-links a {
+  color: white;
+  text-decoration: none;
+  font-size: 18px;
+}
+
+.welcome button {
+  background-color: #2563eb;
+  color: white;
+
+  border: none;
+
+  padding: 12px 20px;
+
+  border-radius: 8px;
+
+  font-size: 16px;
+
+  cursor: pointer;
+}
+
+.welcome button:hover {
+  opacity: 0.9;
+}
+
+.post-card {
+  background-color: #1a1f35;
+
+  padding: 20px;
+
+  margin-top: 20px;
+
+  border-radius: 10px;
+
+  text-align: left;
+}
+
+.post-card h2 {
+  margin-bottom: 10px;
+}
+
+.post-card h4 {
+  color: #60a5fa;
+}
+.welcome {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.welcome h1 {
+  font-size: 48px;
+}
+.post-form {
+  display: flex;
+  flex-direction: column;
+
+  gap: 15px;
+
+  margin-bottom: 30px;
+}
+
+.post-form input,
+.post-form textarea {
+
+  padding: 12px;
+
+  border: none;
+
+  border-radius: 8px;
+
+  font-size: 16px;
+}
+
+.post-form textarea {
+  height: 120px;
+  resize: none;
+}
+
+.post-form button {
+
+  background-color: #2563eb;
+
+  color: white;
+
+  border: none;
+
+  padding: 12px;
+
+  border-radius: 8px;
+
+  cursor: pointer;
+
+  font-size: 16px;
+}
+.delete-btn {
+  margin-top: 15px;
+
+  background-color: crimson;
+
+  color: white;
+
+  border: none;
+
+  padding: 10px 16px;
+
+  border-radius: 8px;
+
+  cursor: pointer;
+}
+
+.delete-btn:hover {
+  opacity: 0.9;
+}
+.post-date {
+  color: gray;
+  font-size: 14px;
+  margin-top: 15px;
+}
