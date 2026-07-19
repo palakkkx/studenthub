@@ -1,16 +1,72 @@
-# React + Vite
+# StudentHub
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+StudentHub is a full-stack web application built using React, Supabase, and PostgreSQL. It provides a platform where students can create, manage, and explore academic posts, making it easier to share resources and collaborate with peers.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- User authentication (Sign Up and Login)
+- Create, edit, and delete posts
+- Search posts by keywords
+- Filter posts by category
+- Responsive user interface
+- Secure data storage using Supabase and PostgreSQL
 
-## React Compiler
+## Technologies Used
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- React.js
+- JavaScript
+- CSS
+- Supabase
+- PostgreSQL
+- Vite
 
-## Expanding the ESLint configuration
+## Project Structure
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```
+studenthub/
+│── src/
+│── public/
+│── package.json
+│── vite.config.js
+│── README.md
+```
+
+## Installation
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/palakkkx/studenthub.git
+```
+
+2. Navigate to the project folder:
+
+```bash
+cd studenthub
+```
+
+3. Install the required dependencies:
+
+```bash
+npm install
+```
+
+4. Start the development server:
+
+```bash
+npm run dev
+```
+
+## Future Improvements
+
+- Real-time notifications
+- User profile management
+- Image upload support
+- Bookmark and save posts
+- Comments and reactions on posts
+
+## Author
+
+Palak Garg
+
+GitHub: https://github.com/palakkkx
