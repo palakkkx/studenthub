@@ -4,14 +4,31 @@ import { supabase } from "../supabase";
 
 function Posts() {
   const [title, setTitle] = useState("");
-  const [subject, setSubject] = useState("");
+  const [category, setCategory] = useState("");
   const [content, setContent] = useState("");
-  const [posts, setPosts] = useState([]);
+  const [file, setFile] = useState(null);
 
-  // Fetch posts when page loads
+  const [search, setSearch] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All");
+
+  const [posts, setPosts] = useState([]);
+  const [currentUser, setCurrentUser] = useState(null);
+
+  const [editingId, setEditingId] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
+
   useEffect(() => {
+    getCurrentUser();
     fetchPosts();
   }, []);
+
+  async function getCurrentUser() {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    setCurrentUser(user);
+  }
 
   async function fetchPosts() {
     const { data, error } = await supabase
@@ -27,99 +44,221 @@ function Posts() {
     setPosts(data);
   }
 
-  // Add a new post
   async function handleAddPost() {
-    if (
-      title.trim() === "" ||
-      subject.trim() === "" ||
-      content.trim() === ""
-    ) {
+    if (!title || !category || !content) {
       alert("Please fill all fields!");
       return;
     }
 
-    const { error } = await supabase
-      .from("posts")
-      .insert([
-        {
-          title,
-          subject,
-          content,
-        },
-      ]);
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    let fileUrl = "";
+
+    if (file) {
+      const fileName = `${Date.now()}-${file.name}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from("notes")
+        .upload(fileName, file);
+
+      if (uploadError) {
+        alert(uploadError.message);
+        return;
+      }
+
+      const { data } = supabase.storage
+        .from("notes")
+        .getPublicUrl(fileName);
+
+      fileUrl = data.publicUrl;
+    }
+
+    const { error } = await supabase.from("posts").insert([
+      {
+        title,
+        category,
+        content,
+        file_url: fileUrl,
+        user_id: user.id,
+      },
+    ]);
 
     if (error) {
-      console.log(error);
-      alert("Failed to add post!");
+      alert(error.message);
       return;
     }
 
-    // Reload posts
-    fetchPosts();
-
-    // Clear form
     setTitle("");
-    setSubject("");
+    setCategory("");
     setContent("");
+    setFile(null);
+
+    fetchPosts();
   }
 
-  // Delete a post
+  function handleEdit(post) {
+    setTitle(post.title);
+    setCategory(post.category);
+    setContent(post.content);
+
+    setEditingId(post.id);
+    setIsEditing(true);
+  }
+
+  async function handleUpdatePost() {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    const { error } = await supabase
+      .from("posts")
+      .update({
+        title,
+        category,
+        content,
+      })
+      .eq("id", editingId)
+      .eq("user_id", user.id);
+
+    if (error) {
+      alert(error.message);
+      return;
+    }
+
+    setTitle("");
+    setCategory("");
+    setContent("");
+    setEditingId(null);
+    setIsEditing(false);
+
+    fetchPosts();
+  }
+
   async function handleDelete(id) {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
     const { error } = await supabase
       .from("posts")
       .delete()
-      .eq("id", id);
+      .eq("id", id)
+      .eq("user_id", user.id);
 
     if (error) {
-      console.log(error);
-      alert("Failed to delete post!");
+      alert(error.message);
       return;
     }
 
     fetchPosts();
   }
 
+  const filteredPosts = posts.filter((post) => {
+    const matchesSearch =
+      post.title.toLowerCase().includes(search.toLowerCase()) ||
+      post.content.toLowerCase().includes(search.toLowerCase());
+
+    const matchesCategory =
+      selectedCategory === "All" ||
+      post.category === selectedCategory;
+
+    return matchesSearch && matchesCategory;
+  });
+
   return (
     <div className="welcome">
-      <h1>Posts 📚</h1>
+      <h1>📚 Student Posts</h1>
 
       <div className="post-form">
         <input
           type="text"
-          placeholder="Enter title"
+          placeholder="Enter Title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
 
-        <input
-          type="text"
-          placeholder="Enter subject"
-          value={subject}
-          onChange={(e) => setSubject(e.target.value)}
-        />
+        <select
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+        >
+          <option value="">Select Category</option>
+          <option value="DSA">DSA</option>
+          <option value="DBMS">DBMS</option>
+          <option value="AI">AI</option>
+          <option value="React">React</option>
+          <option value="DSP">DSP</option>
+          <option value="Embedded">Embedded</option>
+          <option value="Others">Others</option>
+        </select>
 
         <textarea
-          placeholder="Enter content"
+          placeholder="Enter Content"
           value={content}
           onChange={(e) => setContent(e.target.value)}
         />
 
-        <button onClick={handleAddPost}>
-          Add Post
+        <input
+          type="file"
+          accept=".pdf"
+          onChange={(e) => setFile(e.target.files[0])}
+        />
+
+        <button
+          onClick={
+            isEditing
+              ? handleUpdatePost
+              : handleAddPost
+          }
+        >
+          {isEditing ? "Update Post" : "Add Post"}
         </button>
       </div>
 
-      {posts.map((post) => (
-        <PostCard
-          key={post.id}
-          id={post.id}
-          title={post.title}
-          subject={post.subject}
-          content={post.content}
-          created_at={new Date(post.created_at).toLocaleString()}
-          onDelete={handleDelete}
-        />
-      ))}
+      <br />
+
+      <input
+        type="text"
+        placeholder="🔍 Search posts..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+      />
+
+      <br />
+      <br />
+
+      <select
+        value={selectedCategory}
+        onChange={(e) => setSelectedCategory(e.target.value)}
+      >
+        <option value="All">All Categories</option>
+        <option value="DSA">DSA</option>
+        <option value="DBMS">DBMS</option>
+        <option value="AI">AI</option>
+        <option value="React">React</option>
+        <option value="DSP">DSP</option>
+        <option value="Embedded">Embedded</option>
+        <option value="Others">Others</option>
+      </select>
+
+      <br />
+      <br />
+
+      {filteredPosts.length === 0 ? (
+        <h3>No Posts Found.</h3>
+      ) : (
+        filteredPosts.map((post) => (
+          <PostCard
+            key={post.id}
+            {...post}
+            created_at={new Date(post.created_at).toLocaleString()}
+            showDelete={currentUser?.id === post.user_id}
+            onDelete={handleDelete}
+            onEdit={handleEdit}
+          />
+        ))
+      )}
     </div>
   );
 }

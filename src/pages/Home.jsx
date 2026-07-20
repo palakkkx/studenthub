@@ -1,31 +1,33 @@
-import { useState } from "react";
+import { Link } from "react-router-dom";
 
 function Home() {
-
-  const [count, setCount] = useState(0);
-
-  function handleClick() {
-    setCount(count + 1);
-  }
-
   return (
-    <div className="welcome">
+    <div className="home-container">
+      <h1>🎓 Welcome to StudentHub</h1>
+      <p>Your one-stop platform for sharing notes and learning resources.</p>
 
-      <h1>Welcome to StudentHub 🚀</h1>
+      <div className="dashboard-grid">
+        <div className="card">
+          <h2>📝 Posts</h2>
+          <p>Create and manage your study posts.</p>
+          <Link to="/posts">
+            <button>Go to Posts</button>
+          </Link>
+        </div>
 
-      <p>
-        A platform for students to share notes,
-        events, and announcements.
-      </p>
+        <div className="card">
+          <h2>👤 Profile</h2>
+          <p>View and update your profile.</p>
+          <Link to="/profile">
+            <button>View Profile</button>
+          </Link>
+        </div>
 
-      <button onClick={handleClick}>
-        Create Your First Post
-      </button>
-
-      <p>
-        Button clicked: {count} times
-      </p>
-
+        <div className="card">
+          <h2>🚀 Quick Start</h2>
+          <p>Share notes, assignments, and resources with your classmates.</p>
+        </div>
+      </div>
     </div>
   );
 }
